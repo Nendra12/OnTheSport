@@ -1,0 +1,30 @@
+<?php
+
+use App\Livewire\Chat;
+use Illuminate\Support\Facades\Route;
+use Livewire\Volt\Volt;
+use App\Http\Controllers\HomeController;
+use Doctrine\DBAL\Schema\Index;
+
+Route::get('/app', [HomeController::class, 'Index']);
+
+Route::get('/wartawan', function () {
+    return view('welcome');
+})->name('home');
+
+
+Route::view('/wartawan/dashboard', 'dashboard')
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
+
+Route::middleware(['auth'])->group(function () {
+    Route::redirect('settings', 'settings/profile');
+
+    Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
+    Volt::route('settings/password', 'settings.password')->name('settings.password');
+    Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
+
+    Route::get("/wartawan/chat", Chat::class)->name("chat");
+});
+
+require __DIR__.'/auth.php';
