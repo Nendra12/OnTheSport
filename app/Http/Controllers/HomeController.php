@@ -1,4 +1,5 @@
 <?php
+// NAMA FILE: app/Http/Controllers/HomeController.php
 
 namespace App\Http\Controllers;
 
@@ -8,13 +9,16 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Categories $category = null)
     {
-        // Ambil semua data post dari database
-        $posts = Berita::all();
         $lists = Categories::all();
 
-        // Kirim data ke view 'home'
+        if ($category) {
+            $posts = $category->beritas()->latest()->get();
+        } else {
+            $posts = Berita::latest()->get();
+        }
+
         return view('user/home', compact('posts', 'lists'));
     }
 }

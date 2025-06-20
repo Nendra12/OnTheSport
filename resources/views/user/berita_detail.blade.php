@@ -1,12 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>On The Sport</title>
-    <script src="https://cdn.tailwindcss.com"></script> 
+    <title>{{ $berita->judul }} - On The Sport</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        .article-title { font-family: 'Roboto', sans-serif; font-weight: 600; text-align: justify; }
+        .article-body { font-family: 'Merriweather', serif; font-size: 1rem; line-height: 1.75; color: #1a1a1a; font-weight: 400; text-align: justify; }
+        .article-body h2 { font-family: 'Roboto', sans-serif; font-size: 1.5rem; font-weight: 700; margin-top: 2rem; margin-bottom: 1rem; text-align: left; }
+        .article-body a { color: #1D4ED8; text-decoration: underline; }
+        .article-body blockquote { border-left: 4px solid #d1d5db; padding-left: 1rem; margin-left: 0; font-style: italic; color: #4b5563; text-align: left; }
         .card { width: fit-content; height: fit-content; display: flex; align-items: center; justify-content: center; gap: 20px; box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.055); }
         .socialContainer { width: 40px; height: 38px; background-color: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; transition-duration: 0.3s; border: 1px solid #1A1A1A; padding: 5px; }
         .containerInstagram:hover { background-color: #d62976; }
@@ -18,35 +26,16 @@
         .socialContainer:hover .socialSvg { animation: slide-in-top 0.3s both; }
         @keyframes slide-in-top { 0% { transform: translateY(-50px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
         .containerTwitter:hover .socialSvg path, .containerTiktok:hover .socialSvg path { fill: white; }
-        .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
-        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 30px; border-radius: 8px; width: 90%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: modalFadeIn 0.3s; }
-        @keyframes modalFadeIn { from {opacity: 0; transform: translateY(-20px);} to {opacity: 1; transform: translateY(0);} }
-        .close-btn { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
-        .close-btn:hover { color: #333; }
-        .plan-card { border: 1px solid #e2e8f0; border-radius: 8px; transition: all 0.3s ease; }
-        .plan-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .plan-card.popular { border: 2px solid #3b82f6; position: relative; }
-        .popular-badge { position: absolute; top: -12px; right: 20px; background-color: #BB1919; color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-        .news-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .news-card { display: flex; flex-direction: column; height: 100%; }
-        .image-container { position: relative; width: 100%; padding-bottom: 56.25%; overflow: hidden; border-radius: 4px; }
-        .image-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
-        .news-card:hover .image-container img { transform: scale(1.03); }
-        .news-content { padding: 12px 0; flex-grow: 1; }
-        .featured-news { grid-column: 1 / -1; background-color: #ece8e8; padding: 20px; margin: 20px 0; }
-        .featured-image-container { position: relative; width: 100%; padding-bottom: 40%; overflow: hidden; }
-        .featured-image-container img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
         .dropdown { position: relative; display: inline-block; }
-        .dropdown-content { display: none; position: absolute; background-color: #f9f9f9; min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 1; border-radius: 4px; padding: 10px 0; top: 100%; left: 0; }
-        .dropdown-content a { color: black; padding: 12px 16px; text-decoration: none; display: block; border-bottom: 1px solid #ddd; transition: background-color 0.3s; }
+        .dropdown-content { display: none; position: absolute; background-color: #f9f9f9; min-width: 200px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 50; border-radius: 4px; }
+        .dropdown-content a { color: black; padding: 12px 16px; text-decoration: none; display: block; border-bottom: 1px solid #ddd; }
         .dropdown-content a:last-child { border-bottom: none; }
         .dropdown-content a:hover { background-color: #f1f1f1; }
-        .show { display: block; animation: fadeIn 0.3s; }
-        @keyframes fadeIn { from {opacity: 0;} to {opacity: 1;} }
+        .show { display: block; }
     </style>
 </head>
-<body class="font-[arial] font-semibold bg-[#FFAFA]">
-    <nav class="flex mx-4 flex-col">
+<body class="font-[arial] font-semibold bg-white">
+    <nav class="flex mx-4 flex-col bg-white">
         <div class="flex w-full justify-between items-center border-b border-[#d6dbdf] py-4">
             <div class="w-[100%]">
                 <div class="dropdown">
@@ -66,11 +55,11 @@
                 </div>
             </div>
             <div class="w-[100%] flex justify-center">
-                <img src="{{ asset('storage/logo/logo.png') }}" alt="" width="200px">
+                <a href="{{ route('home.index') }}"><img src="{{ asset('storage/logo/logo.png') }}" alt="On The Sport" width="200px"></a>
             </div>
             <div class="w-[100%] flex justify-end">
-                <button class="px-8 py-2 bg-gray-800 text-white hover:bg-[#1A1A1A] cursor-pointer">Register</button>
-                <button class="px-8 py-2 bg-white text-[#1A1A1A] border hover:bg-[#1A1A1A] hover:text-stone-50 ml-2 cursor-pointer">Login</button>
+                <button class="px-8 py-2 bg-gray-800 text-white hover:bg-[#1A1A1A] cursor-pointer rounded-md">Register</button>
+                <button class="px-8 py-2 bg-white text-[#1A1A1A] border border-gray-400 hover:bg-gray-100 ml-2 cursor-pointer rounded-md">Login</button>
             </div>
         </div>
         <div class="flex justify-center border-b border-[#d6dbdf] p-4">
@@ -83,112 +72,83 @@
         </div>
     </nav>
 
-    <article class="mx-4 font-sans mt-8">
-        @if($posts->count() > 0)
-            <div class="news-grid">
-            @foreach ($posts as $index => $post)
-                @if (($index + 1) % 3 != 0)
-                    <a class="news-card group" href="{{ route('berita.show', $post) }}">
-                        <div class="image-container">
-                            <img src="{{ asset('storage/' . $post->gambar) }}" alt="{{ $post->judul }}" class="group-hover:opacity-90">
-                        </div>
-                        <div class="news-content">
-                            <h4 class="mb-2 text-lg font-medium group-hover:underline">{{ $post->judul }}</h4>
-                            <p class="text-gray-700 font-normal line-clamp-2">{{ Str::limit(strip_tags($post->isi), 120) }}</p>
-                            <div class="mt-3 text-xs text-gray-500 font-normal">
-                                <p>{{ \Carbon\Carbon::parse($post->created_at)->format('d M Y, H:i') }}</p>
-                            </div>
-                        </div>
-                    </a>
-                @else
-                    </div>
-                    <hr class="border-t-1 border-[#1A1A1A] my-4 mx-4">
-                    <div class="featured-news group">
-                        <a href="{{ route('berita.show', $post) }}" class="flex flex-col md:flex-row gap-6 items-center">
-                            <div class="featured-image-container w-full md:w-1/2">
-                                <img src="{{ asset('storage/' . $post->gambar) }}" alt="{{ $post->judul }}" class="group-hover:opacity-85">
-                            </div>
-                            <div class="w-full md:w-1/2">
-                                <h3 class="text-2xl font-bold mb-4 group-hover:underline">{{ $post->judul }}</h3>
-                                <p class="text-gray-700 mb-4 font-normal">{{ Str::limit(strip_tags($post->isi), 200) }}</p>
-                                <div class="text-sm text-gray-500 font-normal">
-                                    <p>{{ \Carbon\Carbon::parse($post->created_at)->format('d M Y, H:i') }}</p>
-                                </div>
-                            </div>
+    <main class="py-8 bg-gray-100">
+        <div class="container mx-auto max-w-3xl px-4">
+            <article class="bg-white p-6 md:p-10 rounded-sm shadow-md">
+                
+                <a href="{{ route('home.index', ['category' => $berita->category->id]) }}" class="text-red-700 font-bold uppercase tracking-wider text-sm">
+                    {{ $berita->category->nama }}
+                </a>
+
+                <h1 class="article-title text-4xl md:text-5xl text-gray-900 my-3">
+                    {{ $berita->judul }}
+                </h1>
+
+                <div class="flex items-center text-sm text-gray-500 mb-4">
+                    <time datetime="{{ $berita->created_at->toIso8601String() }}">
+                        {{ $berita->created_at->translatedFormat('d F Y') }}
+                    </time>
+                </div>
+
+                <div class="flex items-center space-x-4 border-y border-gray-200 py-3">
+                    <span class="font-semibold text-gray-700">Bagikan</span>
+                    <a href="#" aria-label="Bagikan ke Instagram" class="text-gray-500 hover:text-pink-600"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 50 50"><path d="M 16 3 C 8.8324839 3 3 8.8324839 3 16 L 3 34 C 3 41.167516 8.8324839 47 16 47 L 34 47 C 41.167516 47 47 41.167516 47 34 L 47 16 C 47 8.8324839 41.167516 3 34 3 L 16 3 z M 16 5 L 34 5 C 40.086484 5 45 9.9135161 45 16 L 45 34 C 45 40.086484 40.086484 45 34 45 L 16 45 C 9.9135161 45 5 40.086484 5 34 L 5 16 C 5 9.9135161 9.9135161 5 16 5 z M 37 11 A 2 2 0 0 0 35 13 A 2 2 0 0 0 37 15 A 2 2 0 0 0 39 13 A 2 2 0 0 0 37 11 z M 25 14 C 18.936712 14 14 18.936712 14 25 C 14 31.063288 18.936712 36 25 36 C 31.063288 36 36 31.063288 36 25 C 36 18.936712 31.063288 14 25 14 z M 25 16 C 29.982407 16 34 20.017593 34 25 C 34 29.982407 29.982407 34 25 34 C 20.017593 34 16 29.982407 16 25 C 16 20.017593 20.017593 16 25 16 z"></path></svg></a>
+                    <a href="#" aria-label="Bagikan ke Twitter" class="text-gray-500 hover:text-black"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 50 50"><path d="M 5.9199219 6 L 20.582031 27.375 L 6.2304688 44 L 9.4101562 44 L 21.986328 29.421875 L 31.986328 44 L 44 44 L 28.681641 21.669922 L 42.199219 6 L 39.029297 6 L 27.275391 19.617188 L 17.933594 6 L 5.9199219 6 z M 9.7167969 8 L 16.880859 8 L 40.203125 42 L 33.039062 42 L 9.7167969 8 z"></path></svg></a>
+                    <a href="#" aria-label="Bagikan ke Facebook" class="text-gray-500 hover:text-blue-600"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 50 50"><path d="M 25 3 C 12.861562 3 3 12.861562 3 25 C 3 36.019135 11.127533 45.138355 21.712891 46.728516 L 22.861328 46.902344 L 22.861328 29.566406 L 17.664062 29.566406 L 17.664062 26.046875 L 22.861328 26.046875 L 22.861328 21.373047 C 22.861328 18.494965 23.551973 16.599417 24.695312 15.410156 C 25.838652 14.220896 27.528004 13.621094 29.878906 13.621094 C 31.758714 13.621094 32.490022 13.734993 33.185547 13.820312 L 33.185547 16.701172 L 30.738281 16.701172 C 29.349697 16.701172 28.210449 17.475903 27.619141 18.507812 C 27.027832 19.539724 26.84375 20.771816 26.84375 22.027344 L 26.84375 26.044922 L 32.966797 26.044922 L 32.421875 29.564453 L 26.84375 29.564453 L 26.84375 46.929688 L 27.978516 46.775391 C 38.71434 45.319366 47 36.126845 47 25 C 47 12.861562 37.138438 3 25 3 z M 25 5 C 36.057562 5 45 13.942438 45 25 C 45 34.729791 38.035799 42.731796 28.84375 44.533203 L 28.84375 31.564453 L 34.136719 31.564453 L 35.298828 24.044922 L 28.84375 24.044922 L 28.84375 22.027344 C 28.84375 20.989871 29.033574 20.060293 29.353516 19.501953 C 29.673457 18.943614 29.981865 18.701172 30.738281 18.701172 L 35.185547 18.701172 L 35.185547 12.009766 L 34.318359 11.892578 C 33.718567 11.811418 32.349197 11.621094 29.878906 11.621094 C 27.175808 11.621094 24.855567 12.357448 23.253906 14.023438 C 21.652246 15.689426 20.861328 18.170128 20.861328 21.373047 L 20.861328 24.046875 L 15.664062 24.046875 L 15.664062 31.566406 L 20.861328 31.566406 L 20.861328 44.470703 C 11.816995 42.554813 5 34.624447 5 25 C 5 13.942438 13.942438 5 25 5 z"></path></svg></a>
+                </div>
+
+                <figure class="my-8">
+                    <img src="{{ asset('storage/' . $berita->gambar) }}" alt="{{ $berita->judul }}" class="w-full h-auto rounded-md">
+                    <figcaption class="mt-2 text-sm text-gray-500 text-left">
+                        Penulis: {{ $berita->penulis }}
+                    </figcaption>
+                </figure>
+                
+                <div class="article-body prose max-w-none">
+                    {!! $berita->isi !!}
+                </div>
+
+                <div class="mt-10 border-t border-gray-200 pt-6">
+                    <h3 class="font-bold text-lg text-gray-800 mb-4">Topik Terkait</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <a href="{{ route('home.index', ['category' => $berita->category->id]) }}" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold text-sm px-4 py-2 rounded-full transition-colors">
+                            {{ $berita->category->nama }}
                         </a>
                     </div>
-                    <hr class="border-t-1 border-[#1A1A1A] my-4 mx-4">
-                    <div class="news-grid">
-                @endif
-            @endforeach
-            </div>
-        @else
-            <div class="text-center py-16">
-                <h2 class="text-2xl font-bold text-gray-700">Tidak Ada Berita</h2>
-                <p class="text-gray-500 mt-2">Belum ada berita yang tersedia dalam kategori ini.</p>
-            </div>
-        @endif
-    </article>
-    
-    <hr class="border-t-1 border-[#1A1A1A] my-4 mx-4">
-
-    <div class="bg-[#1A1A1A] text-white py-8 px-4 mx-4 mb-8">
-        <div class="max-w-4xl mx-auto text-center">
-            <h3 class="text-2xl font-bold mb-4">Dapatkan Akses Eksklusif!</h3>
-            <p class="mb-6">Berlangganan sekarang untuk mendapatkan berita terbaru langsung ke email Anda dan akses konten premium.</p>
-            <button onclick="openModal()" class="px-6 py-3 bg-[#BB1919] hover:bg-[#991515] rounded-md font-medium flex items-center gap-2 mx-auto">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                Subscribe Newsletter
-            </button>
-        </div>
-    </div>
-
-    <hr class="border-t-1 border-[#1A1A1A] my-4 mx-4">
-
-    <div id="subscriptionModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h2 class="text-2xl font-bold mb-6 text-center">Pilih Paket Langganan</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="plan-card p-6 text-center">
-                    <h3 class="font-bold text-xl mb-2">Gratis</h3>
-                    <p class="text-3xl font-bold mb-4">Rp 0<span class="text-sm font-normal">/bulan</span></p>
-                    <ul class="text-left mb-6 space-y-2 font-normal">
-                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Akses berita dasar</li>
-                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>3 artikel premium/bulan</li>
-                        <li class="flex items-center text-gray-400"><svg class="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>Tanpa notifikasi eksklusif</li>
-                    </ul>
-                    <button class="w-full py-2 bg-gray-200 text-gray-800 rounded-md font-medium">Paket Saat Ini</button>
                 </div>
-                <div class="plan-card p-6 text-center relative" style="border: 2px solid #BB1919;">
-                    <div class="popular-badge">POPULAR</div>
-                    <h3 class="font-bold text-xl mb-2">Subscribe</h3>
-                    <p class="text-3xl font-bold mb-4">Rp 49.900<span class="text-sm font-normal">/bulan</span></p>
-                    <ul class="text-left mb-6 space-y-2 font-normal">
-                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Akses semua berita premium</li>
-                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Notifikasi langsung</li>
-                        <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Newsletter eksklusif</li>
-                    </ul>
-                    <button onclick="window.location.href='{{ route('subscribe.store') }}'" class="w-full py-2 text-white rounded-md font-medium bg-[#BB1919] hover:bg-[#991515]">Pilih Paket</button>
-                </div>
-            </div>
-            <div class="text-center"><p class="text-sm text-gray-600 font-normal">*Pembayaran akan diperbarui secara otomatis setiap bulan. Bisa dibatalkan kapan saja.</p></div>
-        </div>
-    </div>
+            </article>
 
-    <footer class="flex mx-4 flex-col mb-10">
+            @if($beritaTerkait->count() > 0)
+                <div class="mt-12">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-700 pb-2">Lainnya di Kategori Ini</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        @foreach($beritaTerkait->take(2) as $terkait)
+                            <a href="{{ route('berita.show', $terkait) }}" class="group">
+                                <img src="{{ asset('storage/' . $terkait->gambar) }}" alt="{{ $terkait->judul }}" class="w-full h-48 object-cover rounded-md mb-2 shadow-md">
+                                <h3 class="font-bold text-xl text-gray-900 group-hover:text-red-700 mt-3">{{ $terkait->judul }}</h3>
+                                <p class="text-gray-500 text-sm mt-1">{{ $terkait->created_at->translatedFormat('d F Y') }}</p>
+                            </a>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+        </div>
+    </main>
+
+    <footer class="flex mx-4 flex-col mb-10 mt-16 font-semibold bg-white">
         <div class="flex flex-col gap-7">
-            <img src="{{ asset('storage/logo/logo.png') }}" alt="" width="200px">
-            <div class="flex flex-wrap gap-x-4 gap-y-2">
-                <a href="{{ route('home.index') }}" class="pr-4 border-r border-gray-300 hover:text-black hover:opacity-85">All</a>
+            <img src="{{ asset('storage/logo/logo.png') }}" alt="On The Sport" width="200px">
+            
+            <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm">
+                <a href="{{ route('home.index') }}" class="pr-4 border-r border-gray-400 hover:text-black hover:opacity-85">All</a>
                 @foreach ($lists as $list)
-                    <a href="{{ route('home.index', ['category' => $list->id]) }}" class="pr-4 border-r border-gray-300 hover:text-black hover:opacity-85 last:border-r-0">{{ $list->nama }}</a>
+                    <a href="{{ route('home.index', ['category' => $list->id]) }}" class="pr-4 border-r border-gray-400 hover:text-black hover:opacity-85 last:border-r-0">{{ $list->nama }}</a>
                 @endforeach
             </div>
-            <hr class="border-t-1 border-[#b8b7b7] w-[50%]">
-            <div class="card">
+
+            <hr class="border-t border-gray-300 w-full">
+            
+            <div class="card bg-white p-4 rounded-lg">
                 <p>Follow On The Sport on : </p>
                 <a href="#" class="socialContainer containerInstagram"><svg class="socialSvg" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50"> <path d="M 16 3 C 8.8324839 3 3 8.8324839 3 16 L 3 34 C 3 41.167516 8.8324839 47 16 47 L 34 47 C 41.167516 47 47 41.167516 47 34 L 47 16 C 47 8.8324839 41.167516 3 34 3 L 16 3 z M 16 5 L 34 5 C 40.086484 5 45 9.9135161 45 16 L 45 34 C 45 40.086484 40.086484 45 34 45 L 16 45 C 9.9135161 45 5 40.086484 5 34 L 5 16 C 5 9.9135161 9.9135161 5 16 5 z M 37 11 A 2 2 0 0 0 35 13 A 2 2 0 0 0 37 15 A 2 2 0 0 0 39 13 A 2 2 0 0 0 37 11 z M 25 14 C 18.936712 14 14 18.936712 14 25 C 14 31.063288 18.936712 36 25 36 C 31.063288 36 36 31.063288 36 25 C 36 18.936712 31.063288 14 25 14 z M 25 16 C 29.982407 16 34 20.017593 34 25 C 34 29.982407 29.982407 34 25 34 C 20.017593 34 16 29.982407 16 25 C 16 20.017593 20.017593 16 25 16 z"></path> </svg></a>
                 <a href="#" class="socialContainer containerTwitter"><svg class="socialSvg" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 50 50"> <path d="M 5.9199219 6 L 20.582031 27.375 L 6.2304688 44 L 9.4101562 44 L 21.986328 29.421875 L 31.986328 44 L 44 44 L 28.681641 21.669922 L 42.199219 6 L 39.029297 6 L 27.275391 19.617188 L 17.933594 6 L 5.9199219 6 z M 9.7167969 8 L 16.880859 8 L 40.203125 42 L 33.039062 42 L 9.7167969 8 z"></path> </svg></a>
@@ -205,34 +165,25 @@
                 <a href="#" class="hover:underline text-xs">Contact the On The Sport</a> 
                 <a href="#" class="hover:underline text-xs">Do not share or sell my info</a> 
             </div>
-            <p class="font-medium text-xs">Copyright 2025 On The Sport. Hak cipta 2025 On The Sport. Semua hak dilindungi undang-undang.<i> On The Sport tidak bertanggung jawab atas konten situs eksternal.</i></p>
+            <p class="font-medium text-xs">Copyright {{ date('Y') }} On The Sport. Hak cipta {{ date('Y') }} On The Sport. Semua hak dilindungi undang-undang.<i> On The Sport tidak bertanggung jawab atas konten situs eksternal.</i></p>
         </div>
     </footer>
 
     <script>
-        function openModal() { document.getElementById('subscriptionModal').style.display = 'block'; }
-        function closeModal() { document.getElementById('subscriptionModal').style.display = 'none'; }
-        function toggleDropdown() { document.getElementById("myDropdown").classList.toggle("show"); }
+        function toggleDropdown() {
+            document.getElementById("myDropdown").classList.toggle("show");
+        }
         window.onclick = function(event) {
-            const modal = document.getElementById('subscriptionModal');
-            if (event.target == modal) { modal.style.display = 'none'; }
             if (!event.target.matches('.group, .group *')) {
                 var dropdowns = document.getElementsByClassName("dropdown-content");
                 for (var i = 0; i < dropdowns.length; i++) {
                     var openDropdown = dropdowns[i];
-                    if (openDropdown.classList.contains('show')) { openDropdown.classList.remove('show'); }
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
                 }
             }
         }
-        document.querySelectorAll('.plan-card button').forEach(button => {
-            if (!button.textContent.includes('Paket Saat Ini')) {
-                button.addEventListener('click', function() {
-                    const planName = this.closest('.plan-card').querySelector('h3').textContent;
-                    alert(`Anda telah memilih paket ${planName}. Lanjutkan ke pembayaran.`);
-                    closeModal();
-                });
-            }
-        });
     </script>
 </body>
 </html>
