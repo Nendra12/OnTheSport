@@ -1,24 +1,30 @@
 <?php
-// NAMA FILE: app/Http/Controllers/HomeController.php
 
 namespace App\Http\Controllers;
 
 use App\Models\Berita;
 use App\Models\Categories;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
     public function index(Categories $category = null)
     {
         $lists = Categories::all();
+        $postsQuery = Berita::query();
 
         if ($category) {
-            $posts = $category->beritas()->latest()->get();
-        } else {
-            $posts = Berita::latest()->get();
+            $postsQuery->where('kategori_id', $category->id);
         }
 
-        return view('user/home', compact('posts', 'lists'));
+        $delayInMinutes = 1; 
+
+        $timeLimit = Carbon::now()->subMinutes($delayInMinutes);
+
+        $postsQuery->where('created_at', '<=', $timeLimit);
+
+        $posts = $postsQuery->latest()->get();
+
+        return view('user.home', compact('posts', 'lists'));
     }
 }

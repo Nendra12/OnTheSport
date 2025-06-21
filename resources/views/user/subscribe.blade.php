@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Langganan Premium - On The Sport</title>
     <script src="https://cdn.tailwindcss.com"></script> 
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         .card { width: fit-content; height: fit-content; display: flex; align-items: center; justify-content: center; gap: 20px; box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.055); }
         .socialContainer { width: 40px; height: 38px; background-color: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; transition-duration: 0.3s; border: 1px solid #1A1A1A; padding: 5px; }
@@ -29,36 +30,58 @@
     </style>
 </head>
 <body class="font-[arial] font-semibold bg-[#FFAFA]">
-    <nav class="flex mx-4 flex-col bg-white">
+    <nav class="flex mx-4 flex-col bg-white" x-data>
         <div class="flex w-full justify-between items-center border-b border-[#d6dbdf] py-4">
+            
             <div class="w-[100%]">
-                <div class="dropdown">
-                    <button onclick="toggleDropdown()" class="group flex items-center justify-center relative z-10 [transition:all_0.5s_ease] rounded-[0.375rem] p-[5px] cursor-pointer border border-[#999] outline-none focus-visible:outline-0">
+                <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                    <button @click="open = !open" class="group flex items-center justify-center relative z-10 [transition:all_0.5s_ease] rounded-[0.375rem] p-[5px] cursor-pointer border border-[#999] outline-none focus-visible:outline-0">
                         <svg fill="currentColor" stroke="none" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 overflow-visible [transition:transform_.35s_ease] group-hover:[transition-delay:.25s] [&_path]:[transition:transform_.35s_ease] group-hover:rotate-45">
-                            <path class="group-hover:[transform:rotate(112.5deg)_translate(-27.2%,-80.2%)]" d="m3.45,8.83c-.39,0-.76-.23-.92-.62-.21-.51.03-1.1.54-1.31L14.71,2.08c.51-.21,1.1.03,1.31.54.21.51-.03,1.1-.54,1.31L3.84,8.75c-.13.05-.25.08-.38.08Z"></path>
-                            <path class="group-hover:[transform:rotate(22.5deg)_translate(15.5%,-23%)]" d="m2.02,17.13c-.39,0-.76-.23-.92-.62-.21-.51.03-1.1.54-1.31L21.6,6.94c.51-.21,1.1.03,1.31.54.21.51-.03,1.1-.54,1.31L2.4,17.06c-.13.05-.25.08-.38.08Z"></path>
-                            <path class="group-hover:[transform:rotate(112.5deg)_translate(-15%,-149.5%)]" d="m8.91,21.99c-.39,0-.76-.23-.92-.62-.21-.51.03-1.1.54-1.31l11.64-4.82c.51-.21,1.1.03,1.31.54.21.51-.03,1.1-.54,1.31l-11.64,4.82c-.13.05-.25.08-.38.08Z"></path>
+                            <path d="m3.45,8.83c-.39,0-.76-.23-.92-.62-.21-.51.03-1.1.54-1.31L14.71,2.08c.51-.21,1.1.03,1.31.54.21.51-.03,1.1-.54,1.31L3.84,8.75c-.13.05-.25.08-.38.08Z"></path>
+                            <path d="m2.02,17.13c-.39,0-.76-.23-.92-.62-.21-.51.03-1.1.54-1.31L21.6,6.94c.51-.21,1.1.03,1.31.54.21.51-.03,1.1-.54,1.31L2.4,17.06c-.13.05-.25.08-.38.08Z"></path>
+                            <path d="m8.91,21.99c-.39,0-.76-.23-.92-.62-.21-.51.03-1.1.54-1.31l11.64-4.82c.51-.21,1.1.03,1.31.54.21.51-.03,1.1-.54,1.31l-11.64,4.82c-.13.05-.25.08-.38.08Z"></path>
                         </svg>
                     </button>
-                    <div id="myDropdown" class="dropdown-content">
-                        <a href="{{ route('subscribe.store') }}">Home</a>
+                    <div x-show="open" x-transition style="display: none;" class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                        <a href="{{ route('subscribe.create') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Home</a>
                         @foreach ($lists as $list)
-                            <a href="{{ route('subscribe.create', ['category' => $list->id]) }}">{{ $list->nama }}</a>
+                            <a href="{{ route('subscribe.create', ['category' => $list->id]) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ $list->nama }}</a>
                         @endforeach
                     </div>
                 </div>
             </div>
+            
             <div class="w-[100%] flex justify-center">
-                <a href="{{ route('home.index') }}"><img src="{{ asset('storage/logo/logo.png') }}" alt="On The Sport" width="200px"></a>
+                <a href="{{ route('home') }}"><img src="{{ asset('storage/logo/logo.png') }}" alt="On The Sport" width="200px"></a>
             </div>
+
             <div class="w-[100%] flex justify-end items-center">
                 <span class="text-[#BB1919] mr-4 font-medium">Premium Member</span>
-                <button class="px-8 py-2 bg-white text-[#1A1A1A] border hover:bg-gray-100 ml-2 cursor-pointer rounded-md">Logout</button>
+                @auth('web')
+                    <div x-data="{ open: false }" @click.outside="open = false" class="relative">
+                        <button @click="open = !open" class="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-100 focus:outline-none transition">
+                            <span class="font-medium text-sm text-gray-700">Halo, {{ Auth::user()->name }}</span>
+                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="open" x-transition style="display: none;" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                            <div class="px-4 py-3 border-b">
+                                <p class="text-sm font-semibold text-gray-900">Signed in as</p>
+                                <p class="text-sm text-gray-600 truncate">{{ Auth::user()->email }}</p>
+                            </div>
+                            <div class="border-t border-gray-100"></div>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                @endauth
             </div>
         </div>
+        
         <div class="flex justify-center border-b border-[#d6dbdf] p-4">
             <div class="flex flex-wrap justify-center gap-4 text-gray-700">
-                <a href="{{ route('subscribe.store') }}" class="pr-4 border-r border-gray-300 hover:text-black">Home</a>
+                <a href="{{ route('subscribe.create') }}" class="pr-4 border-r border-gray-300 hover:text-black">Home</a>
                 @foreach ($lists as $list)
                     <a href="{{ route('subscribe.create', ['category' => $list->id]) }}" class="pr-4 border-r border-gray-300 hover:text-black last:border-r-0">{{ $list->nama }}</a>
                 @endforeach

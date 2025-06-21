@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ $berita->judul }} - On The Sport</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -35,36 +36,65 @@
     </style>
 </head>
 <body class="font-[arial] font-semibold bg-white">
-    <nav class="flex mx-4 flex-col bg-white">
+    <nav class="flex mx-4 flex-col bg-white" x-data>
         <div class="flex w-full justify-between items-center border-b border-[#d6dbdf] py-4">
+            
+            {{-- Dropdown Kategori --}}
             <div class="w-[100%]">
-                <div class="dropdown">
-                    <button onclick="toggleDropdown()" class="group flex items-center justify-center relative z-10 [transition:all_0.5s_ease] rounded-[0.375rem] p-[5px] cursor-pointer border border-[#999] outline-none focus-visible:outline-0">
+                <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+                    <button @click="open = !open" class="group flex items-center justify-center relative z-10 [transition:all_0.5s_ease] rounded-[0.375rem] p-[5px] cursor-pointer border border-[#999] outline-none focus-visible:outline-0">
                         <svg fill="currentColor" stroke="none" stroke-width="0" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 overflow-visible [transition:transform_.35s_ease] group-hover:[transition-delay:.25s] [&_path]:[transition:transform_.35s_ease] group-hover:rotate-45">
-                            <path class="group-hover:[transform:rotate(112.5deg)_translate(-27.2%,-80.2%)]" d="m3.45,8.83c-.39,0-.76-.23-.92-.62-.21-.51.03-1.1.54-1.31L14.71,2.08c.51-.21,1.1.03,1.31.54.21.51-.03,1.1-.54,1.31L3.84,8.75c-.13.05-.25.08-.38.08Z"></path>
-                            <path class="group-hover:[transform:rotate(22.5deg)_translate(15.5%,-23%)]" d="m2.02,17.13c-.39,0-.76-.23-.92-.62-.21-.51.03-1.1.54-1.31L21.6,6.94c.51-.21,1.1.03,1.31.54.21.51-.03,1.1-.54,1.31L2.4,17.06c-.13.05-.25.08-.38.08Z"></path>
-                            <path class="group-hover:[transform:rotate(112.5deg)_translate(-15%,-149.5%)]" d="m8.91,21.99c-.39,0-.76-.23-.92-.62-.21-.51.03-1.1.54-1.31l11.64-4.82c.51-.21,1.1.03,1.31.54.21.51-.03,1.1-.54,1.31l-11.64,4.82c-.13.05-.25.08-.38.08Z"></path>
+                            <path d="m3.45,8.83c-.39,0-.76-.23-.92-.62-.21-.51.03-1.1.54-1.31L14.71,2.08c.51-.21,1.1.03,1.31.54.21.51-.03,1.1-.54,1.31L3.84,8.75c-.13.05-.25.08-.38.08Z"></path>
+                            <path d="m2.02,17.13c-.39,0-.76-.23-.92-.62-.21-.51.03-1.1.54-1.31L21.6,6.94c.51-.21,1.1.03,1.31.54.21.51-.03,1.1-.54,1.31L2.4,17.06c-.13.05-.25.08-.38.08Z"></path>
+                            <path d="m8.91,21.99c-.39,0-.76-.23-.92-.62-.21-.51.03-1.1.54-1.31l11.64-4.82c.51-.21,1.1.03,1.31.54.21.51-.03,1.1-.54,1.31l-11.64,4.82c-.13.05-.25.08-.38.08Z"></path>
                         </svg>
                     </button>
-                    <div id="myDropdown" class="dropdown-content">
-                        <a href="{{ route('subscribe.store') }}">Home</a>
+                    <div x-show="open" x-transition style="display: none;" class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                        {{-- Karena ini halaman subscribe, link 'Home' akan tetap di halaman subscribe --}}
+                        <a href="{{ route('subscribe.create') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Home</a>
                         @foreach ($lists as $list)
-                            <a href="{{ route('subscribe.create', ['category' => $list->id]) }}">{{ $list->nama }}</a>
+                            <a href="{{ route('subscribe.create', ['category' => $list->id]) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">{{ $list->nama }}</a>
                         @endforeach
                     </div>
                 </div>
             </div>
+            
+            {{-- Logo --}}
             <div class="w-[100%] flex justify-center">
-                <a href="{{ route('home.index') }}"><img src="{{ asset('storage/logo/logo.png') }}" alt="On The Sport" width="200px"></a>
+                <a href="{{ route('home') }}"><img src="{{ asset('storage/logo/logo.png') }}" alt="On The Sport" width="200px"></a>
             </div>
+
+            {{-- Dropdown Profil Pengguna (Sama seperti di Home) --}}
             <div class="w-[100%] flex justify-end items-center">
                 <span class="text-[#BB1919] mr-4 font-medium">Premium Member</span>
-                <button class="px-8 py-2 bg-white text-[#1A1A1A] border hover:bg-gray-100 ml-2 cursor-pointer rounded-md">Logout</button>
+                {{-- Karena halaman ini memerlukan login, kita hanya perlu blok @auth --}}
+                @auth('web')
+                    <div x-data="{ open: false }" @click.outside="open = false" class="relative">
+                        <button @click="open = !open" class="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-100 focus:outline-none transition">
+                            <span class="font-medium text-sm text-gray-700">Halo, {{ Auth::user()->name }}</span>
+                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div x-show="open" x-transition style="display: none;" class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                            <div class="px-4 py-3 border-b">
+                                <p class="text-sm font-semibold text-gray-900">Signed in as</p>
+                                <p class="text-sm text-gray-600 truncate">{{ Auth::user()->email }}</p>
+                            </div>
+                            <div class="border-t border-gray-100"></div>
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Logout</button>
+                            </form>
+                        </div>
+                    </div>
+                @endauth
             </div>
         </div>
+        
+        {{-- Navigasi Kategori Horizontal --}}
         <div class="flex justify-center border-b border-[#d6dbdf] p-4">
             <div class="flex flex-wrap justify-center gap-4 text-gray-700">
-                <a href="{{ route('subscribe.store') }}" class="pr-4 border-r border-gray-300 hover:text-black">Home</a>
+                {{-- Link kategori mengarah ke halaman subscribe yang difilter --}}
+                <a href="{{ route('subscribe.create') }}" class="pr-4 border-r border-gray-300 hover:text-black">Home</a>
                 @foreach ($lists as $list)
                     <a href="{{ route('subscribe.create', ['category' => $list->id]) }}" class="pr-4 border-r border-gray-300 hover:text-black last:border-r-0">{{ $list->nama }}</a>
                 @endforeach
@@ -140,7 +170,7 @@
                     <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-red-700 pb-2">Lainnya di Kategori Ini</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         @foreach($beritaTerkait->take(2) as $terkait)
-                            <a href="{{ route('berita.show', $terkait) }}" class="group">
+                            <a href="{{ route('berita.show.subscribe', $terkait) }}" class="group">
                                 <img src="{{ asset('storage/' . $terkait->gambar) }}" alt="{{ $terkait->judul }}" class="w-full h-48 object-cover rounded-md mb-2 shadow-md">
                                 <h3 class="font-bold text-xl text-gray-900 group-hover:text-red-700 mt-3">{{ $terkait->judul }}</h3>
                                 <p class="text-gray-500 text-sm mt-1">{{ $terkait->created_at->translatedFormat('d F Y') }}</p>
@@ -174,7 +204,7 @@
             <img src="{{ asset('storage/logo/logo.png') }}" alt="On The Sport" width="200px">
             
             <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm">
-                <a href="{{ route('subscribe.store') }}" class="pr-4 border-r border-gray-400 hover:text-black hover:opacity-85">All</a>
+                <a href="{{ route('subscribe.create') }}" class="pr-4 border-r border-gray-400 hover:text-black hover:opacity-85">All</a>
                 @foreach ($lists as $list)
                     <a href="{{ route('subscribe.create', ['category' => $list->id]) }}" class="pr-4 border-r border-gray-400 hover:text-black hover:opacity-85 last:border-r-0">{{ $list->nama }}</a>
                 @endforeach

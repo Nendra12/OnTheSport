@@ -18,21 +18,27 @@ new #[Layout('components.layouts.auth')] class extends Component {
      * Handle an incoming registration request.
      */
     public function register(): void
-    {
-        $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
-        ]);
+{
+    // Validasi input dari form
+    $validated = $this->validate([
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.\App\Models\User::class],
+        'password' => ['required', 'string', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
+    ]);
 
-        $validated['password'] = Hash::make($validated['password']);
+    $validated['role'] = 'wartawan';
 
-        event(new Registered(($user = User::create($validated))));
+    $validated['password'] = \Illuminate\Support\Facades\Hash::make($validated['password']);
 
-        Auth::login($user);
+    $user = \App\Models\User::create($validated);
+    event(new \Illuminate\Auth\Events\Registered($user));
 
-        $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
-    }
+    \Illuminate\Support\Facades\Auth::guard('wartawan')->login($user);
+
+    session()->regenerate();
+
+    $this->redirect(route('dashboard'), navigate: true);
+}
 }; ?>
 
 <div class="flex flex-col gap-6">

@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>On The Sport</title>
-    <script src="https://cdn.tailwindcss.com"></script> 
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         .card { width: fit-content; height: fit-content; display: flex; align-items: center; justify-content: center; gap: 20px; box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.055); }
         .socialContainer { width: 40px; height: 38px; background-color: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; transition-duration: 0.3s; border: 1px solid #1A1A1A; padding: 5px; }
@@ -58,26 +59,73 @@
                         </svg>
                     </button>
                     <div id="myDropdown" class="dropdown-content">
-                        <a href="{{ route('home.index') }}">Home</a>
+                        <a href="{{ route('home') }}">Home</a>
                         @foreach ($lists as $list)
-                            <a href="{{ route('home.index', ['category' => $list->id]) }}">{{ $list->nama }}</a>
+                            <a href="{{ route('home', ['category' => $list->id]) }}">{{ $list->nama }}</a>
                         @endforeach
                     </div>
                 </div>
             </div>
             <div class="w-[100%] flex justify-center">
-                <img src="{{ asset('storage/logo/logo.png') }}" alt="" width="200px">
+                <a href="{{ route('home') }}"><img src="{{ asset('storage/logo/logo.png') }}" alt="On The Sport" width="200px"></a>
             </div>
-            <div class="w-[100%] flex justify-end">
-                <button class="px-8 py-2 bg-gray-800 text-white hover:bg-[#1A1A1A] cursor-pointer">Register</button>
-                <button class="px-8 py-2 bg-white text-[#1A1A1A] border hover:bg-[#1A1A1A] hover:text-stone-50 ml-2 cursor-pointer">Login</button>
+            <div class="w-[100%] flex justify-end items-center">
+                @auth('web') 
+                    
+                    <div x-data="{ open: false }" @click.outside="open = false" class="relative">
+                        
+                        <button @click="open = !open" class="flex items-center space-x-2 px-3 py-2 rounded-md hover:bg-gray-100 focus:outline-none transition">
+                            <span class="font-medium text-sm text-gray-700">Halo, {{ Auth::user()->name }}</span>
+                            <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+
+                        <div x-show="open" 
+                            x-transition:enter="transition ease-out duration-100"
+                            x-transition:enter-start="transform opacity-0 scale-95"
+                            x-transition:enter-end="transform opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-75"
+                            x-transition:leave-start="transform opacity-100 scale-100"
+                            x-transition:leave-end="transform opacity-0 scale-95"
+                            style="display: none;" 
+                            class="absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                            
+                            <div class="px-4 py-3 border-b">
+                                <p class="text-sm font-semibold text-gray-900">Signed in as</p>
+                                <p class="text-sm text-gray-600 truncate">{{ Auth::user()->email }}</p>
+                            </div>
+
+                            {{-- Menu Item --}}
+                            <!-- <div class="py-1">
+                                <a href="{{ route('profile.edit') }}" class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                    Profil & Pengaturan
+                                </a>
+                            </div> -->
+
+                            <div class="border-t border-gray-100"></div>
+
+                            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                                @csrf
+                                <button type="submit" class="flex items-center w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                                    Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                @else
+                    <a href="{{ route('login') }}" class="px-8 py-2 bg-white text-[#1A1A1A] border rounded-md hover:bg-gray-100 ml-2 cursor-pointer">Login</a>
+                    @if (Route::has('register'))
+                        <a href="{{ route('register') }}" class="px-8 py-2 bg-gray-800 text-white hover:bg-gray-700 cursor-pointer ml-2 rounded-md">Register</a>
+                    @endif
+                @endauth
             </div>
         </div>
         <div class="flex justify-center border-b border-[#d6dbdf] p-4">
             <div class="flex flex-wrap justify-center gap-4 text-gray-700">
-                <a href="{{ route('home.index') }}" class="pr-4 border-r border-gray-300 hover:text-black">Home</a>
+                <a href="{{ route('home') }}" class="pr-4 border-r border-gray-300 hover:text-black">Home</a>
                 @foreach ($lists as $list)
-                    <a href="{{ route('home.index', ['category' => $list->id]) }}" class="pr-4 border-r border-gray-300 hover:text-black last:border-r-0">{{ $list->nama }}</a>
+                    <a href="{{ route('home', ['category' => $list->id]) }}" class="pr-4 border-r border-gray-300 hover:text-black last:border-r-0">{{ $list->nama }}</a>
                 @endforeach
             </div>
         </div>
@@ -171,9 +219,8 @@
                         <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Notifikasi langsung</li>
                         <li class="flex items-center"><svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>Newsletter eksklusif</li>
                     </ul>
-                    <button onclick="window.location.href='{{ route('subscribe.store') }}'" class="w-full py-2 text-white rounded-md font-medium bg-[#BB1919] hover:bg-[#991515]">Pilih Paket</button>
+                    <button onclick="window.location.href='{{ route('subscribe.create') }}'" class="w-full py-2 text-white rounded-md font-medium bg-[#BB1919] hover:bg-[#991515]">Pilih Paket</button>                </div>
                 </div>
-            </div>
             <div class="text-center"><p class="text-sm text-gray-600 font-normal">*Pembayaran akan diperbarui secara otomatis setiap bulan. Bisa dibatalkan kapan saja.</p></div>
         </div>
     </div>
@@ -182,9 +229,11 @@
         <div class="flex flex-col gap-7">
             <img src="{{ asset('storage/logo/logo.png') }}" alt="" width="200px">
             <div class="flex flex-wrap gap-x-4 gap-y-2">
-                <a href="{{ route('home.index') }}" class="pr-4 border-r border-gray-300 hover:text-black hover:opacity-85">All</a>
+                {{-- DIUBAH: Menggunakan nama rute 'home' --}}
+                <a href="{{ route('home') }}" class="pr-4 border-r border-gray-300 hover:text-black hover:opacity-85">All</a>
                 @foreach ($lists as $list)
-                    <a href="{{ route('home.index', ['category' => $list->id]) }}" class="pr-4 border-r border-gray-300 hover:text-black hover:opacity-85 last:border-r-0">{{ $list->nama }}</a>
+                    {{-- DIUBAH: Menggunakan nama rute 'home' --}}
+                    <a href="{{ route('home', ['category' => $list->id]) }}" class="pr-4 border-r border-gray-300 hover:text-black hover:opacity-85 last:border-r-0">{{ $list->nama }}</a>
                 @endforeach
             </div>
             <hr class="border-t-1 border-[#b8b7b7] w-[50%]">
