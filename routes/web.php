@@ -23,6 +23,7 @@ Route::middleware('auth:web')->group(function () {
 
 Route::get('/wartawan', fn() => view('welcome'))->name('wartawan.index');
 
+
 Route::middleware('auth:wartawan')->group(function () {
     Route::view('/wartawan/dashboard', 'dashboard')->name('dashboard');
     Volt::route('/wartawan/settings/profile', 'settings.profile')->name('settings.profile');

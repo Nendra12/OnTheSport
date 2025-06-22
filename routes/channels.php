@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Broadcast;
 
-Broadcast::channel('chat.{receiver_id}', function ($user, $receiver_id) {
-    return (int) $user->id === (int) $receiver_id;
-});
+Broadcast::channel('chat.{receiverId}', function ($user, $receiverId) {
+    return (int) $user->id === (int) $receiverId;
+}, ['guards' => ['web', 'wartawan']]);
  

@@ -14,10 +14,9 @@
             <header class="w-full max-w-7xl px-6 lg:px-8">
                 <div class="py-10">
                     <nav class="flex flex-1 justify-end">
-                        
                         @auth('wartawan')
                             <a
-                                href="{{ route('dashboard') }}"
+                                href="{{ route('wartawan.dashboard') }}"
                                 class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
                             >
                                 Dashboard
